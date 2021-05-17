@@ -1,0 +1,7 @@
+target 'Learn Quran' do
+
+pod 'SSZipArchive'
+pod ‘Appirater’
+pod 'NVHTarGzip'
+
+end

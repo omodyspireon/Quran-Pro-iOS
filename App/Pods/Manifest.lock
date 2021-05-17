@@ -1,0 +1,24 @@
+PODS:
+  - Appirater (2.3.1)
+  - NVHTarGzip (1.0.1)
+  - SSZipArchive (2.2.2)
+
+DEPENDENCIES:
+  - Appirater
+  - NVHTarGzip
+  - SSZipArchive
+
+SPEC REPOS:
+  trunk:
+    - Appirater
+    - NVHTarGzip
+    - SSZipArchive
+
+SPEC CHECKSUMS:
+  Appirater: 44a4651f7912a17dc906b655f0c215d5bb768b84
+  NVHTarGzip: 74cc227b902e5725900d37eb6d79b57e93005a73
+  SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23
+
+PODFILE CHECKSUM: 748075035aa62c87c47aa2fe03f4228124ffd437
+
+COCOAPODS: 1.10.1

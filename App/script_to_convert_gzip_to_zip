@@ -1,0 +1,11 @@
+for f in *.tar.gz 
+do
+  rm -rf ${f%.tar.gz}
+	mkdir ${f%.tar.gz}
+	tar xvzf $f -C ${f%.tar.gz}
+	zip ${f%.tar.gz}.zip -r ${f%.tar.gz}
+	rm -rf ${f%.tar.gz}
+done
+
+https://gist.github.com/seathief/5967408
+
