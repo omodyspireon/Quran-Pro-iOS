@@ -1,3 +1,7 @@
+## Update
+- This is the Swift 5 version of the orignal archived project so we continue to build on the great work that Adil has done
+- https://github.com/adilbenmoussa/Quran-Pro-iOS
+
 ## Quran Pro iOS
   <img src="https://github.com/adilbenmoussa/Quran-Pro-iOS/blob/master/quran.png" width="900">
    
