@@ -101,7 +101,7 @@ class CenterViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let nextBtn: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "next"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(CenterViewController.nextClickedHandler))
         
         let previousBtn: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "previous"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(CenterViewController.previousClickedHandler))
-        previousBtn.imageInsets = UIEdgeInsets.init(top: 0.0, left: 0.0, bottom: 0.0, right: kUIBarButtonItemUIEdgeInsetsAudioRight);
+        //previousBtn.imageInsets = UIEdgeInsets.init(top: 0.0, left: 0.0, bottom: 0.0, right: kUIBarButtonItemUIEdgeInsetsAudioRight);
         
         var playControlItems: Array<UIBarButtonItem> = []
         playControlItems = [closePlayControlerBtn, nextBtn, previousBtn]

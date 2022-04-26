@@ -47,6 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
         
         //Style the navigation bar
         UINavigationBar.appearance().tintColor = kUINavigationBarTintColor
+        UINavigationBar.appearance().backgroundColor = UIColor(red: 79, green: 106, blue: 173)
 
         UINavigationBar.appearance().setBackgroundImage(UIImage(named: kUINavigationBarBackgroundImage), for: UIBarMetrics.default)
         //let shadow = NSShadow()
@@ -56,6 +57,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
             //NSShadowAttributeName: shadow,
             NSAttributedString.Key.font.rawValue: kUINavigationBarTitleFont
         ])
+        
+        if #available(iOS 15.0, *) {
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithOpaqueBackground()
+            navBarAppearance.backgroundColor = UIColor(red: 79, green: 106, blue: 173)
+            navBarAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white,
+                                                    NSAttributedString.Key.font: kUINavigationBarTitleFont]
+            UINavigationBar.appearance().standardAppearance = navBarAppearance
+            UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+        }
         
         //Style the status bar
         UIApplication.shared.setStatusBarStyle(kUIStatusBarStyle, animated: false)
