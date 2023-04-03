@@ -26,7 +26,7 @@ class ABRepeatService {
     fileprivate func load(){
         // Loads the bookmarks
         if let bookMarksData = Bundle.readArrayPlistFromDocumentFolder(kABRepeatFile) {
-            bookMarks = bookMarksData.mutableCopy() as! NSMutableArray
+            bookMarks = bookMarksData.mutableCopy() as? NSMutableArray
         }
         // No bookmarkt found yet, so create a new empty file
         else{
@@ -64,6 +64,7 @@ class ABRepeatService {
         
         if dirty {
             Bundle.writeArrayPlistToDocumentFolder(filename: kABRepeatFile, array: bookMarks)
+            self.load()
         }
     }
     
@@ -71,12 +72,14 @@ class ABRepeatService {
     func add(_ verse: Verse){
         bookMarks.add([kChapterhId: verse.chapterId, kVerseId: verse.id])
         Bundle.writeArrayPlistToDocumentFolder(filename: kABRepeatFile, array: bookMarks)
+        self.load()
     }
     
     //Remove all bookmarks
     func clear() {
         bookMarks = NSMutableArray()
         Bundle.writeArrayPlistToDocumentFolder(filename: kABRepeatFile, array: bookMarks)
+        self.load()
     }
     
     //Check if the bookmark list is empty

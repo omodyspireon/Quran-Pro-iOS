@@ -82,9 +82,11 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
     @objc func setPlayVerse(_ verseToPlay: Verse? = nil) {
         if(verseToPlay != nil) {
             self.currentVerseIndex = dollar.currentChapter.verses.index(of: verseToPlay!)
-            self.fullRepeatEndIndex = self.currentVerseIndex
-            setupABRepeatPlayer()
-            resetABRepeat()
+            if(self.setupABRepeat == true) {
+                self.fullRepeatEndIndex = self.currentVerseIndex
+                setupABRepeatPlayer()
+                resetABRepeat()
+            }
         }
     }
     
