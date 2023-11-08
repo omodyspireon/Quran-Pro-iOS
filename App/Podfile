@@ -1,5 +1,8 @@
 target 'Learn Quran' do
 
+# ignore all warnings from all pods
+inhibit_all_warnings!
+  
 pod 'SSZipArchive'
 pod 'Appirater'
 pod 'NVHTarGzip'

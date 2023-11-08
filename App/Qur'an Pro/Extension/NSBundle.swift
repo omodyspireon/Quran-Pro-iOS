@@ -36,7 +36,7 @@ extension Bundle {
     }
     
     @objc class func readArrayPlist(_ filename: String) -> NSArray? {
-        if let array: AnyObject? = readPlist(filename) {
+        if let array: AnyObject = readPlist(filename) {
             if let array = array as? NSArray? {
                 return array
             }
@@ -48,7 +48,7 @@ extension Bundle {
     }
     
     @objc class func readDictionayPlist(_ filename: String) -> NSDictionary? {
-        if let dictinary: AnyObject? = readPlist(filename) {
+        if let dictinary: AnyObject = readPlist(filename) {
             if let dictinary = dictinary as? NSDictionary? {
                 return dictinary
             }
