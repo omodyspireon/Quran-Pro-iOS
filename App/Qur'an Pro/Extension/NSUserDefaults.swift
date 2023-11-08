@@ -12,7 +12,7 @@ import Foundation
 extension UserDefaults {
 
     @objc class func currentLanguageKey() -> String! {
-        let dirs: NSArray! = UserDefaults.standard.object(forKey: "AppleLanguages") as! NSArray
+        let dirs: NSArray! = (UserDefaults.standard.object(forKey: "AppleLanguages") as! NSArray)
         return dirs[0] as? String
     }
 }

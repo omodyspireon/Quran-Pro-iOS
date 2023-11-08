@@ -148,7 +148,7 @@ class ChaptersViewController: UIViewController, UITableViewDelegate, UITableView
     // scroll the current chanpter and sets the bg color
     @objc func selectRowFromSetting() {
         if hasChapterView() {
-            if let row: Int = dollar.chapters.index(of: dollar.currentChapter) {
+            if let row: Int = dollar.chapters.firstIndex(of: dollar.currentChapter) {
                 let indexPath: IndexPath = IndexPath(row: row, section: 0)
                 tableView.selectRow(at: indexPath, animated: false, scrollPosition: UITableView.ScrollPosition.top)
                 cellBackgroundColorAtIndexPath(indexPath)

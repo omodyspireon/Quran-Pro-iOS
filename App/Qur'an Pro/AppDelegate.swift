@@ -73,13 +73,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
         self.becomeFirstResponder()
 
         // Inits the data service
-        DataService.sharedInstance()
+        let _ = DataService.sharedInstance()
 
         // Inits the download service
-        DownloadService.sharedInstance()
+        let _ = DownloadService.sharedInstance()
 
         // Bookmarks service
-        BookmarkService.sharedInstance()
+        let _ = BookmarkService.sharedInstance()
 
         if UIApplication.instancesRespond(to: #selector(UIApplication.registerUserNotificationSettings(_:))) {
             UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge], categories: nil))

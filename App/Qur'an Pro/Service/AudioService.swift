@@ -80,7 +80,7 @@ class AudioService: NSObject, AVAudioPlayerDelegate {
 
     @objc func setPlayVerse(_ verseToPlay: Verse? = nil) {
         if verseToPlay != nil {
-            self.currentVerseIndex = dollar.currentChapter.verses.index(of: verseToPlay!)
+            self.currentVerseIndex = dollar.currentChapter.verses.firstIndex(of: verseToPlay!)
             if self.setupABRepeat == true {
                 self.fullRepeatEndIndex = self.currentVerseIndex
                 setupABRepeatPlayer()
@@ -114,7 +114,7 @@ class AudioService: NSObject, AVAudioPlayerDelegate {
             verse = verseToPlay
             // added 03/03/2017 - OM
             setupABRepeatPlayer()
-            self.currentVerseIndex = dollar.currentChapter.verses.index(of: verse)
+            self.currentVerseIndex = dollar.currentChapter.verses.firstIndex(of: verse)
         }
 
         delegate?.scrollToVerse(self.currentVerseIndex, searchText: "")

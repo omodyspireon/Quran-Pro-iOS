@@ -126,8 +126,8 @@ class ABCircularProgressView: UIView {
     }
 
     fileprivate  func backgroundCirclePath() -> UIBezierPath {
-        let startAngle: CGFloat = -(CGFloat)(M_PI / 2) // 90 degrees
-        let endAngle: CGFloat = CGFloat(2 * M_PI) + startAngle
+        let startAngle: CGFloat = -(CGFloat)(Double.pi / 2) // 90 degrees
+        let endAngle: CGFloat = CGFloat(2 * Double.pi) + startAngle
         let center: CGPoint = CGPoint(x: bounds.size.width/2, y: bounds.size.height/2)
         let radius: CGFloat = (bounds.size.width - lineWidth)/2
 

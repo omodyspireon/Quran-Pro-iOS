@@ -22,6 +22,6 @@ class Translation: CustomStringConvertible {
     }
 
     var description: String {
-        return "id= \(id), name= \(name)"
+        return "id= \(id ?? "id"), name= \(name ?? "name")"
     }
 }

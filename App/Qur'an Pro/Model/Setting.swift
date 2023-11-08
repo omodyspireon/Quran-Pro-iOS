@@ -38,6 +38,6 @@ class Setting: CustomStringConvertible {
     }
 
     var description: String {
-        return "name= \(name) type=\(type)"
+        return "name= \(name ?? "name") type=\(type ?? .settingTypeAppReview)"
     }
 }

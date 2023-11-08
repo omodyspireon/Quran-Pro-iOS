@@ -172,7 +172,7 @@ class DataService {
                 array = a
             } else {
                 array = NSMutableArray()
-                items.setObject(array, forKey: juz as NSCopying)
+                items.setObject(array as Any, forKey: juz as NSCopying)
                 output.append(array)
             }
             array.add(kPartQuarts[i])
@@ -218,7 +218,7 @@ class DataService {
             var chapter: Chapter!
             var verse: Verse
             for i in 0...(list.count-1) {
-                item = list[i] as! [String: String]
+                item = (list[i] as! [String: String])
                 chapter = Chapter(id: i, name: item["name"]!, revelationLocation: item["rev"]!)
 
                 // Adds a basmalah into all chapters, except Al-Fatiha(0) and Al-Taubah(8)
@@ -269,7 +269,8 @@ class DataService {
                                 DispatchQueue.main.async {
                                     var e: NSError?
                                     let docs = Bundle.documents()
-                                    let pathToRemove: String = docs! + "/\(self.currentLanguageKey).plist"
+                                    // TODO: - Fix later, why is there a need for default value, return if there's nothing to remove.
+                                    let pathToRemove: String = docs! + "/\(self.currentLanguageKey ?? "").plist"
                                     // let pathToRemove: String = "\(Bundle.documents())/\(self.currentLanguageKey).plist"
                                     do {
                                         try FileManager.default.removeItem(atPath: pathToRemove)
@@ -428,8 +429,9 @@ class DataService {
             }
         } else {
             // create a temp file applicationVersion
-            let userSettings: NSMutableDictionary = [kApplicationVersionKey: kApplicationVersion,
-                kCurrentTranslationKey: currentLanguageKey,
+            let userSettings: NSMutableDictionary = [
+                kApplicationVersionKey: kApplicationVersion,
+                kCurrentTranslationKey: currentLanguageKey as Any,
                 kCurrentReciterKey: 1,
                 kCurrentRepeatVerseKey: 0, // 4,
                 kCurrentRepeatChapterhKey: 0, // 4,
@@ -466,7 +468,7 @@ class DataService {
         self.currentChapter = chapter
 
         let userSettings: NSMutableDictionary? = Bundle.readDictionaryPlistFromDocumentFolder(kUserSettingsFile)
-        let index = self.chapters.index(of: chapter)
+        let index = self.chapters.firstIndex(of: chapter)
         userSettings?.setObject((index!>=0 ? index : 0)!, forKey: kCurrentChapterKey as NSCopying)
         Bundle.writeDictionaryPlistToDocumentFolder(filename: kUserSettingsFile, dictionary: userSettings!)
     }

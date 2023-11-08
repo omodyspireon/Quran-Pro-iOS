@@ -23,7 +23,7 @@ class BookmarkService: NSObject {
         super.init()
         // Loads the bookmarks
         if let bookMarksData = Bundle.readArrayPlistFromDocumentFolder(kBookmarkFile) {
-            bookMarks = bookMarksData.mutableCopy() as! NSMutableArray
+            bookMarks = (bookMarksData.mutableCopy() as! NSMutableArray)
         }
         // No bookmarkt found yet, so create a new empty file
         else {

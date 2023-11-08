@@ -48,7 +48,7 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         // init the seach controller
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
-        searchController.dimsBackgroundDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.delegate = self
         searchController.searchBar.searchBarStyle = UISearchBar.Style.default
         searchController.searchBar.placeholder = "e.g. 6:88, الله, hizb 8 or Allah".local
@@ -241,7 +241,7 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 // apply the predicate to search for the verses containing the query
                 let searchVesers: NSArray = verses.filtered(using: predicate) as NSArray
                 if searchVesers.count == 0 {
-                    self.view.makeToast(message: "No results".local, duration: 2, position: HRToastPositionTop as AnyObject)
+                    self.view.makeToast(message: "No results".local, duration: 2, position: .top)
                     self.searchContents = NSMutableDictionary()
                     self.searchKeys = NSMutableArray()
                 } else {
@@ -249,9 +249,10 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
                     let tuple = self.service.sortedKeysAndContents(NSMutableArray(array: searchVesers))
                     self.searchContents = tuple.contents
                     self.searchKeys = tuple.keys
-                    if let existToast = objc_getAssociatedObject(self.view, &HRToastView) as? UIView {
-                        self.view.hideToast(toast: existToast, force: true)
-                    }
+                    // FIXME: Fix this later.
+//                    if let existToast = objc_getAssociatedObject(self.view, &HRToastView) as? UIView {
+//                        self.view.hideToast(toast: existToast, force: true)
+//                    }
                 }
                 self.tableView.reloadData()
                 // Flurry.logEvent(FlurryEvent.searchQuery, withParameters: ["value": searchText])

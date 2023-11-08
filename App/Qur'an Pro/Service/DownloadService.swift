@@ -61,7 +61,7 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
     }
 
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        print("session error: \(error?.localizedDescription).")
+        print("session error: \(String(describing: error?.localizedDescription)).")
     }
 
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
@@ -204,7 +204,7 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
             }
     */
         } else {
-            print("session \(session) download failed with error \(error?.localizedDescription)")
+            print("session \(session) download failed with error \(String(describing: error?.localizedDescription))")
             if let audiChapter: AudioChapter = getAudioChapterWithTaskIdentifier(task.taskIdentifier) {
                 // Something went wrong, it seems the file couldn't be downloaded from the mirror
                 // Notify the ui about those changes
