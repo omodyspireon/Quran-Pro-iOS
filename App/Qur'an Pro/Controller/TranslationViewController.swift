@@ -12,30 +12,29 @@ import Foundation
 let translationCellId = "translationCellId"
 
 class TranslationViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    
+
     @IBOutlet var tableView: UITableView!
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         overrideBackButton()
     }
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: translationCellId)
         self.title = "Select translation".local
     }
-    
-    // MARK:  UITextFieldDelegate Methods
+
+    // MARK: UITextFieldDelegate Methods
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dollar.translations.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: translationCellId, for: indexPath) as UITableViewCell
         let translation = dollar.translations[indexPath.row]
@@ -43,28 +42,25 @@ class TranslationViewController: UIViewController, UITableViewDataSource, UITabl
         cell.textLabel?.text = translation.name
         cell.imageView?.image = translation.icon
         if isPro {
-            if (dollar.currentLanguageKey == translation.id){
+            if dollar.currentLanguageKey == translation.id {
                 cell.accessoryType = UITableViewCell.AccessoryType.checkmark
                 cell.selectionStyle = UITableViewCell.SelectionStyle.none
-            }
-            else{
+            } else {
                 cell.accessoryType = UITableViewCell.AccessoryType.none
             }
-        }
-        else{
+        } else {
             if dollar.currentLanguageKey == translation.id {
                 cell.accessoryType = UITableViewCell.AccessoryType.checkmark
                 cell.selectionStyle = UITableViewCell.SelectionStyle.none
                 cell.unlock()
-            }
-            else{
+            } else {
                 cell.lock()
             }
         }
         return cell
     }
-    
-    // MARK:  UITableViewDelegate Methods
+
+    // MARK: UITableViewDelegate Methods
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let translation = dollar.translations[indexPath.row]
@@ -73,9 +69,8 @@ class TranslationViewController: UIViewController, UITableViewDataSource, UITabl
             dollar.setPersistentObjectForKey(translation.id as AnyObject, key: kCurrentTranslationKey)
             tableView.reloadData()
             dollar.updateContent()
-            //Flurry.logEvent(FlurryEvent.translationSelected, withParameters: ["name": translation.name])
-        }
-        else if dollar.currentLanguageKey != translation.id {
+            // Flurry.logEvent(FlurryEvent.translationSelected, withParameters: ["name": translation.name])
+        } else if dollar.currentLanguageKey != translation.id {
             self.askUserForPurchasingProVersion(FlurryEvent.translationSelected)
         }
     }

@@ -11,9 +11,9 @@
 ////  Copyright (c) 2015 Islamhome.info. All rights reserved.
 ////
 //
-//import Foundation
+// import Foundation
 //
-//class MigrationService {
+// class MigrationService {
 //    
 //    class func run(dataService: DataService) {
 //        func isLanguageAvailable(langKey: String) -> Bool{
@@ -170,4 +170,4 @@
 //        }
 //        return out
 //    }
-//}
+// }

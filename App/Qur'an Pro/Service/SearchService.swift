@@ -10,24 +10,23 @@
 private let _SearchServiceSharedInstance = SearchService()
 
 class SearchService {
-    
+
     class func sharedInstance() -> SearchService {
         return _SearchServiceSharedInstance
     }
 
-    
-    //hierarchical chapters and versers
-    //Get a list of keys and contents from the persistent data
+    // hierarchical chapters and versers
+    // Get a list of keys and contents from the persistent data
     // to be used in the tableview
-    func initialKeysAndContents() -> (keys: NSMutableArray, contents: NSMutableDictionary){
-        let contents:NSMutableDictionary = [:]
-        let keys:NSMutableArray = []
+    func initialKeysAndContents() -> (keys: NSMutableArray, contents: NSMutableDictionary) {
+        let contents: NSMutableDictionary = [:]
+        let keys: NSMutableArray = []
         var key: String
-        
-        //Construct the key list with empty content
+
+        // Construct the key list with empty content
         for chapter in dollar.chapters {
             key = dollar.getKeyId(chapter)
-            if (contents.object(forKey: key) == nil) {
+            if contents.object(forKey: key) == nil {
                 keys.add(key)
                 let list = NSMutableArray()
                 for verse in chapter.verses {
@@ -40,39 +39,39 @@ class SearchService {
         }
         return (keys: keys, contents: contents)
     }
-    
-    //Get a list of keys and contents from the persistent data
+
+    // Get a list of keys and contents from the persistent data
     // to be used in the tableview
-    func sortedKeysAndContents(_ list: NSMutableArray) -> (keys: NSMutableArray, contents: NSMutableDictionary){
+    func sortedKeysAndContents(_ list: NSMutableArray) -> (keys: NSMutableArray, contents: NSMutableDictionary) {
         let sortedByChapter: NSArray = list.sortedArray(using: [NSSortDescriptor(key: "chapterId", ascending: true)]) as NSArray
         let sortedByVerse: NSArray = list.sortedArray(using: [NSSortDescriptor(key: "id", ascending: true)]) as NSArray
-        
-        let contents:NSMutableDictionary = [:]
-        let keys:NSMutableArray = []
-        
+
+        let contents: NSMutableDictionary = [:]
+        let keys: NSMutableArray = []
+
         var chapter: Chapter
         var verse: Verse
         var values: NSMutableArray
         var key: String
-        
-        //Construct the key list with empty content
+
+        // Construct the key list with empty content
         for item in sortedByChapter {
             if let v: Verse = item as? Verse {
                 chapter = dollar.chapters[v.chapterId]
                 key = dollar.getKeyId(chapter)
-                if (contents.object(forKey: key) == nil) {
+                if contents.object(forKey: key) == nil {
                     keys.add(key)
                     contents.setObject(NSMutableArray(), forKey: key as NSCopying)
                 }
             }
         }
-        
-        //fill in the content of the keys
+
+        // fill in the content of the keys
         for item in sortedByVerse {
             if let v: Verse = item as? Verse {
                 chapter = dollar.chapters[v.chapterId]
                 key = dollar.getKeyId(chapter)
-                if (contents.object(forKey: key) != nil) {
+                if contents.object(forKey: key) != nil {
                     values = (contents.object(forKey: key) as? NSMutableArray)!
                     if v.chapterId == chapter.id {
                         var verseId: Int = v.id

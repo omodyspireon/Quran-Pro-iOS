@@ -10,20 +10,19 @@
 import Foundation
 
 class Part: CustomStringConvertible {
-    
+
     var id: Int
     var partQuarters: [PartQuarter]
-    
-    init(id: Int){
+
+    init(id: Int) {
         self.id = id
         self.partQuarters = []
     }
-    
+
     var description: String {
         return "id: \(id), partQuarters: \(partQuarters)"
     }
 }
-
 
 let kPartQuarts = [[1, 1], 	[2, 26], 	[2, 44], 	[2, 60],
     [2, 75], 	[2, 92], 	[2, 106], 	[2, 124],
@@ -85,4 +84,3 @@ let kPartQuarts = [[1, 1], 	[2, 26], 	[2, 44], 	[2, 60],
     [72, 1], 	[73, 20], 	[75, 1], 	[76, 19],
     [78, 1], 	[80, 1], 	[82, 1], 	[84, 1],
     [87, 1], 	[90, 1], 	[94, 1], 	[100, 9]]
-

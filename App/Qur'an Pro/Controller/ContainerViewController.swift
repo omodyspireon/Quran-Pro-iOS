@@ -16,17 +16,17 @@ enum SlideOutState {
 import UIKit
 
 class ContainerViewController: UIViewController, CenterViewControllerDelegate, UIGestureRecognizerDelegate, SKStoreProductViewControllerDelegate {
-    
+
     @objc var centerNavigationController: UINavigationController!
     @objc var centerViewController: CenterViewController!
-    
+
     @objc var chaptersNavigationController: UINavigationController!
-    @objc var chaptersViewController:ChaptersViewController?
-    
+    @objc var chaptersViewController: ChaptersViewController?
+
     @objc var moreNavigationController: UINavigationController!
-    @objc var moreViewController:MoreViewController?
+    @objc var moreViewController: MoreViewController?
     @objc var whatIsNewViewController: WhatIsNewViewController?
-    var currentState:SlideOutState = SlideOutState.bothCollapsed {
+    var currentState: SlideOutState = SlideOutState.bothCollapsed {
         didSet {
             let shouldShowShadow = currentState != SlideOutState.bothCollapsed
             self.showShadowForCenterViewController(shouldShowShadow)
@@ -35,10 +35,10 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(ContainerViewController.exitWhatIsNewVCdHandler(_:)), name:NSNotification.Name(rawValue: kExitWhatIsNewVCNotification), object: nil)
-        //NSNotificationCenter.defaultCenter().addObserver(self, selector: "openSKControllerHandler:", name:kOpenSKControllerNotification, object: nil)
-        
+
+        NotificationCenter.default.addObserver(self, selector: #selector(ContainerViewController.exitWhatIsNewVCdHandler(_:)), name: NSNotification.Name(rawValue: kExitWhatIsNewVCNotification), object: nil)
+        // NSNotificationCenter.defaultCenter().addObserver(self, selector: "openSKControllerHandler:", name:kOpenSKControllerNotification, object: nil)
+
 //        let defaults = NSUserDefaults.standardUserDefaults()
 //        let currentVersion = Double(kApplicationVersion as String)
         if isPro {
@@ -53,31 +53,30 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
 //            else{
                 initCenterViewControllers()
 //            }
-        }
-        else{
+        } else {
             initCenterViewControllers()
         }
     }
-    
+
     @objc func initCenterViewControllers() {
-        
+
         centerViewController = UIStoryboard.centerViewController()
         centerViewController.delegate = self
-        
+
         // wrap the centerViewController in a navigation controller, so we can push views to it
         // and display bar button items in the navigation bar
         centerNavigationController = UINavigationController(rootViewController: centerViewController)
         view.addSubview(centerNavigationController.view)
         addChild(centerNavigationController)
-        
+
         centerNavigationController.didMove(toParent: self)
-        
+
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(ContainerViewController.handlePanGesture(_:)))
         centerNavigationController.view.addGestureRecognizer(panGestureRecognizer)
 
     }
-    
-    @objc func exitWhatIsNewVCdHandler(_ notification: Notification){
+
+    @objc func exitWhatIsNewVCdHandler(_ notification: Notification) {
         if whatIsNewViewController != nil {
             whatIsNewViewController!.view.removeFromSuperview()
             whatIsNewViewController!.removeFromParent()
@@ -85,7 +84,7 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
         }
         initCenterViewControllers()
     }
-    
+
     /*func openSKControllerHandler(notification: NSNotification){
         let storeViewController:SKStoreProductViewController = SKStoreProductViewController()
         storeViewController.delegate = self;
@@ -105,37 +104,36 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
             }
         })
     }*/
-    
-    
+
     // this is SKStoreProductViewControllerDelegate implementation
     override func productViewControllerDidFinish(_ viewController: SKStoreProductViewController) {
         viewController.dismiss(animated: false, completion: nil)
     }
-    
+
     // MARK: CenterViewController delegate methods
-    
+
     func toggleChaptersPanel() {
         let notAlreadyExpanded = (currentState != SlideOutState.chaptersPanelExpanded)
         if notAlreadyExpanded {
             addCategoriesPanelViewController()
         }
-        
+
         animateCategoriesPanel(shouldExpand: notAlreadyExpanded, duration: 0.5)
     }
-    
+
     func toggleMorePanel() {
-        
+
         let notAlreadyExpanded = (currentState != SlideOutState.morePanelExpanded)
         if notAlreadyExpanded {
             addMorePanelViewController()
         }
-        
+
         animateMoretPanel(shouldExpand: notAlreadyExpanded, duration: 0.5)
     }
-    
+
     @objc func addCategoriesPanelViewController() {
-        
-        if(chaptersViewController == nil){
+
+        if chaptersViewController == nil {
             chaptersViewController = UIStoryboard.chaptersViewController()
             chaptersNavigationController = UINavigationController(rootViewController: chaptersViewController!)
         }
@@ -145,38 +143,37 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
         }
         chaptersNavigationController!.didMove(toParent: self)
     }
-    
+
     @objc func addMorePanelViewController() {
-        if(moreViewController == nil){
+        if moreViewController == nil {
             moreViewController = UIStoryboard.moreViewController()
             moreNavigationController = UINavigationController(rootViewController: moreViewController!)
         }
-        
+
         if moreNavigationController.view.superview == nil {
             view.insertSubview(moreNavigationController!.view, at: 0)
             addChild(moreNavigationController!)
         }
         moreNavigationController!.didMove(toParent: self)
     }
-    
+
     @objc func animateCategoriesPanel(shouldExpand: Bool, duration: TimeInterval) {
         if shouldExpand {
             currentState = SlideOutState.chaptersPanelExpanded
             self.chaptersNavigationController.view.frame.size.width = centerNavigationController.view.frame.width - kCenterPanelExpandedOffset
             animateCenterPanelXPosition(targetPosition: centerNavigationController.view.frame.width - kCenterPanelExpandedOffset, duration: duration)
-        }
-        else{
-            animateCenterPanelXPosition(targetPosition: 0, duration: duration) { finished in
+        } else {
+            animateCenterPanelXPosition(targetPosition: 0, duration: duration) { _ in
                 self.currentState = SlideOutState.bothCollapsed
-                
+
                 self.chaptersViewController?.view.removeFromSuperview()
                 self.chaptersNavigationController?.view.removeFromSuperview()
-                //self.chaptersViewController = nil
+                // self.chaptersViewController = nil
                // self.chaptersNavigationController = nil
             }
         }
     }
-    
+
     @objc func animateMoretPanel(shouldExpand: Bool, duration: TimeInterval) {
         if shouldExpand {
             currentState = SlideOutState.morePanelExpanded
@@ -184,27 +181,26 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
             self.moreNavigationController.view.frame.size.width = centerNavigationController.view.frame.width - kCenterPanelExpandedOffset
             self.moreNavigationController.view.frame.size.height = centerNavigationController.view.frame.height
             animateCenterPanelXPosition(targetPosition: -centerNavigationController.view.frame.width + kCenterPanelExpandedOffset, duration: duration)
-        }
-        else{
-            animateCenterPanelXPosition(targetPosition: 0, duration: 0.5) { item in
+        } else {
+            animateCenterPanelXPosition(targetPosition: 0, duration: 0.5) { _ in
                 self.currentState = SlideOutState.bothCollapsed
-                
+
                 self.moreViewController!.view.removeFromSuperview()
                 self.moreNavigationController?.view.removeFromSuperview()
-                //self.moreViewController = nil
-                //self.moreNavigationController = nil
+                // self.moreViewController = nil
+                // self.moreNavigationController = nil
             }
         }
     }
-    
+
     @objc func animateCenterPanelXPosition(targetPosition: CGFloat, duration: TimeInterval, completion: ((Bool) -> Void)! = nil) {
         UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: UIView.AnimationOptions(), animations: {
             self.centerNavigationController.view.frame.origin.x = targetPosition
             }, completion: completion)
     }
-    
+
     @objc func showShadowForCenterViewController(_ shouldShowShadow: Bool) {
-        if (shouldShowShadow) {
+        if shouldShowShadow {
             centerNavigationController.view.layer.shadowOpacity = 0.8
         } else {
             centerNavigationController.view.layer.shadowOpacity = 0.0
@@ -212,7 +208,7 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
     }
 
     func isPanelVisble() -> Int {
-        switch (currentState) {
+        switch currentState {
         case SlideOutState.morePanelExpanded:
             return 1
         case SlideOutState.chaptersPanelExpanded:
@@ -224,7 +220,7 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
     }
 
     func collapseSidePanels() {
-        switch (currentState) {
+        switch currentState {
         case SlideOutState.morePanelExpanded:
             toggleMorePanel()
         case SlideOutState.chaptersPanelExpanded:
@@ -233,15 +229,15 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
             break
         }
     }
-    
+
     // MARK: Gesture recognizer
     @objc func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
         let gestureIsDraggingFromLeftToRight = (recognizer.velocity(in: view).x > 0)
-        
-        switch(recognizer.state) {
+
+        switch recognizer.state {
         case .began:
-            if (currentState == SlideOutState.bothCollapsed) {
-                if (gestureIsDraggingFromLeftToRight) {
+            if currentState == SlideOutState.bothCollapsed {
+                if gestureIsDraggingFromLeftToRight {
                     addCategoriesPanelViewController()
                 } else {
                     addMorePanelViewController()
@@ -252,12 +248,11 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
             recognizer.view!.center.x = recognizer.view!.center.x + recognizer.translation(in: view).x
             recognizer.setTranslation(CGPoint.zero, in: view)
         case .ended:
-            if(chaptersNavigationController != nil && chaptersNavigationController.view.superview != nil) {
+            if chaptersNavigationController != nil && chaptersNavigationController.view.superview != nil {
                 // animate the side panel open or closed based on whether the view has moved more or less than halfway
                 let hasMovedGreaterThanHalfway = recognizer.view!.center.x > view.bounds.size.width
                 animateCategoriesPanel(shouldExpand: hasMovedGreaterThanHalfway, duration: 0.5)
-            }
-            else if (moreNavigationController != nil && moreNavigationController.view.superview != nil) {
+            } else if moreNavigationController != nil && moreNavigationController.view.superview != nil {
                 let hasMovedGreaterThanHalfway = recognizer.view!.center.x < 0
                 animateMoretPanel(shouldExpand: hasMovedGreaterThanHalfway, duration: 0.5)
             }
@@ -265,18 +260,17 @@ class ContainerViewController: UIViewController, CenterViewControllerDelegate, U
             break
         }
     }
-    
-    //MARK: Orientation change
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator){
+
+    // MARK: Orientation change
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        coordinator.animate(alongsideTransition: { (context: UIViewControllerTransitionCoordinatorContext!) -> Void in
-            if self.currentState == SlideOutState.morePanelExpanded{
+        coordinator.animate(alongsideTransition: { (_: UIViewControllerTransitionCoordinatorContext!) -> Void in
+            if self.currentState == SlideOutState.morePanelExpanded {
                 self.animateMoretPanel(shouldExpand: true, duration: 0.0)
-            }
-            else if self.currentState == SlideOutState.chaptersPanelExpanded{
+            } else if self.currentState == SlideOutState.chaptersPanelExpanded {
                 self.animateCategoriesPanel(shouldExpand: true, duration: 0.0)
             }
-            }, completion: { (context: UIViewControllerTransitionCoordinatorContext!) -> Void in
+            }, completion: { (_: UIViewControllerTransitionCoordinatorContext!) -> Void in
         })
     }
 }

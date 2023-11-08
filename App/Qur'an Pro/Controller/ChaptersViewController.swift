@@ -10,57 +10,57 @@
 import UIKit
 
 class ChaptersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+
     @IBOutlet weak var tableView: UITableView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: "ChaptersCell")
         tableView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: "PartsCell")
-        tableView.estimatedRowHeight = 64.0;
-        tableView.rowHeight = UITableView.automaticDimension;
+        tableView.estimatedRowHeight = 64.0
+        tableView.rowHeight = UITableView.automaticDimension
 
         updateLabels()
     }
 
     // handles the left button click action
     @objc func leftButtonClickHandler() {
-        //toggle the view
+        // toggle the view
         dollar.currentGroupViewType = hasChapterView() ? GroupViewType.groupPartsView : GroupViewType.groupChaptersView
-        ////Flurry.logEvent(FlurryEvent.sestionSelected, withParameters: ["index": dollar.currentGroupViewType.rawValue])// fout
+        //// Flurry.logEvent(FlurryEvent.sestionSelected, withParameters: ["index": dollar.currentGroupViewType.rawValue])// fout
         updateLabels()
-        //reload the list
+        // reload the list
         tableView.reloadData()
         selectRowFromSetting()
         dollar.setPersistentObjectForKey(dollar.currentGroupViewType.rawValue as AnyObject, key: kGrouViewTypeKey)
     }
-    
+
     @objc func updateLabels() {
         self.title = hasChapterView() ? "Chapters".local :  "Ajzā’"
-        
+
         let leftBarButtonItem: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: dollar.currentGroupViewType == .groupChaptersView ?  "parts" : "chapters"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(ChaptersViewController.leftButtonClickHandler))
         self.navigationItem.leftBarButtonItem = leftBarButtonItem
     }
-    
+
     @objc func cellBackgroundColorAtIndexPath(_ indexPath: IndexPath) {
         let cell: UITableViewCell?  = tableView.cellForRow(at: indexPath)
         cell?.contentView.backgroundColor = kSelectedCellBackgroudColor
     }
-    
+
     @objc func hasChapterView() -> Bool {
         return dollar.currentGroupViewType == .groupChaptersView
     }
-    
+
     // MARK: Table View Data Source
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         return hasChapterView() ? 1 : dollar.parts.count
     }
-    
+
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return hasChapterView() ? nil : "Juz'".local + "-" + "\(String(dollar.parts[section].id))"
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return hasChapterView() ? 114 : 8
     }
@@ -78,9 +78,7 @@ class ChaptersViewController: UIViewController, UITableViewDelegate, UITableView
 //            return indeces;
 //        }
 //    }
-    
 
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellId = hasChapterView() ? "Chapters" : "Parts"
 
@@ -88,7 +86,7 @@ class ChaptersViewController: UIViewController, UITableViewDelegate, UITableView
         if cell != nil {
             cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "\(cellId)Cell")
         }
-        if hasChapterView(){
+        if hasChapterView() {
             let chapter: Chapter = dollar.chapters[indexPath.row] as Chapter
             cell?.imageView!.image = UIImage(named: "sn\(chapter.id + 1)")
             cell?.textLabel!.text = "\(chapter.id + 1). \(chapter.name.local)"
@@ -100,8 +98,7 @@ class ChaptersViewController: UIViewController, UITableViewDelegate, UITableView
             }
             cell?.detailTextLabel?.text = chapter.revelationLocation + " - \(verses) ayāt"
             cell?.detailTextLabel?.textColor = kCellTextLabelColor
-        }
-        else{
+        } else {
             let part: Part = dollar.parts[indexPath.section] as Part
             let partQuarter = part.partQuarters[indexPath.row]
             let chapter: Chapter = dollar.chapters[partQuarter.chapterId - 1] as Chapter
@@ -119,22 +116,21 @@ class ChaptersViewController: UIViewController, UITableViewDelegate, UITableView
         }
         return cell!
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return kHeightForRowAtIndexPath
     }
-    
-    // Mark: Table View Delegate
-    
+
+    // MARK: Table View Delegate
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if hasChapterView() {
             cellBackgroundColorAtIndexPath(indexPath)
             let chapter: Chapter = dollar.chapters[indexPath.row] as Chapter
             dollar.setAndSaveCurrentChapter(chapter)
-            NotificationCenter.default.post(name: Notification.Name(rawValue: kNewChapterSelectedNotification), object: nil,  userInfo:["chapter": chapter])
-            //Flurry.logEvent(FlurryEvent.chapterSelected, withParameters: ["chapter": chapter.description])
-        }
-        else{
+            NotificationCenter.default.post(name: Notification.Name(rawValue: kNewChapterSelectedNotification), object: nil, userInfo: ["chapter": chapter])
+            // Flurry.logEvent(FlurryEvent.chapterSelected, withParameters: ["chapter": chapter.description])
+        } else {
             let part: Part = dollar.parts[indexPath.section] as Part
             let partQuarter = part.partQuarters[indexPath.row]
             let chapter: Chapter = dollar.chapters[partQuarter.chapterId - 1] as Chapter
@@ -143,12 +139,12 @@ class ChaptersViewController: UIViewController, UITableViewDelegate, UITableView
                 verseId -= 1
             }
             let verse: Verse = chapter.verses[verseId]
-            NotificationCenter.default.post(name: Notification.Name(rawValue: kNewVerseSelectedNotification), object: nil,  userInfo:["verse":verse, "verseReady":true, "toggle": "left"])
-            //Flurry.logEvent(FlurryEvent.verseViaSectionSelected, withParameters: ["verse": verse.description])
+            NotificationCenter.default.post(name: Notification.Name(rawValue: kNewVerseSelectedNotification), object: nil, userInfo: ["verse": verse, "verseReady": true, "toggle": "left"])
+            // Flurry.logEvent(FlurryEvent.verseViaSectionSelected, withParameters: ["verse": verse.description])
         }
         cellBackgroundColorAtIndexPath(indexPath)
     }
-    
+
     // scroll the current chanpter and sets the bg color
     @objc func selectRowFromSetting() {
         if hasChapterView() {

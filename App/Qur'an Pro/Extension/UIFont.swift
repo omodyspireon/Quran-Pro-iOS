@@ -10,51 +10,41 @@
 import Foundation
 
 extension UIFont {
-    
-    //get the arabic font
-    @objc class func latin() ->UIFont {
+
+    // get the arabic font
+    @objc class func latin() -> UIFont {
         if dollar.fontLevel == FontSizeType.large {
             return kLatinFontLarge
-        }
-        else if dollar.fontLevel == FontSizeType.extraLarge {
+        } else if dollar.fontLevel == FontSizeType.extraLarge {
             return kLatinFontLarge
-        }
-        else{
+        } else {
             return kLatinFont
         }
     }
-    
+
     @objc class func arabicFont() -> UIFont {
         if dollar.fontLevel == FontSizeType.large {
             if dollar.arabicFont == ArabicFontType.useMEQuranicFont {
                 return kMEQuranicArabicFontLarge
-            }
-            else if dollar.arabicFont == ArabicFontType.usePDMSQuranicFont {
+            } else if dollar.arabicFont == ArabicFontType.usePDMSQuranicFont {
                 return kPDMSQuranicArabicFontLarge
-            }
-            else{
+            } else {
                 return kArabicFontLarge
             }
-        }
-        else if dollar.fontLevel == FontSizeType.extraLarge {
+        } else if dollar.fontLevel == FontSizeType.extraLarge {
             if dollar.arabicFont == ArabicFontType.useMEQuranicFont {
                 return kMEQuranicArabicFontExtraLarge
-            }
-            else if dollar.arabicFont == ArabicFontType.usePDMSQuranicFont {
+            } else if dollar.arabicFont == ArabicFontType.usePDMSQuranicFont {
                 return kPDMSQuranicArabicFontExtraLarge
-            }
-            else{
+            } else {
                 return kArabicFontExtraLarge
             }
-        }
-        else{
+        } else {
             if dollar.arabicFont == ArabicFontType.useMEQuranicFont {
                 return kMEQuranicArabicFont
-            }
-            else if dollar.arabicFont == ArabicFontType.usePDMSQuranicFont {
+            } else if dollar.arabicFont == ArabicFontType.usePDMSQuranicFont {
                 return kPDMSQuranicArabicFont
-            }
-            else{
+            } else {
                 return kArabicFont
             }
         }

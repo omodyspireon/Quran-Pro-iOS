@@ -14,11 +14,11 @@ class BookmarkService: NSObject {
     class func sharedInstance() -> BookmarkService {
         return _BookmarkServiceSharedInstance
     }
-    
-    //keep a reference to the bookmarks
-    var bookMarks: NSMutableArray!;
-    
-    //Load the persitent bookmarks
+
+    // keep a reference to the bookmarks
+    var bookMarks: NSMutableArray!
+
+    // Load the persitent bookmarks
     override init() {
         super.init()
         // Loads the bookmarks
@@ -26,15 +26,15 @@ class BookmarkService: NSObject {
             bookMarks = bookMarksData.mutableCopy() as! NSMutableArray
         }
         // No bookmarkt found yet, so create a new empty file
-        else{
+        else {
             bookMarks = NSMutableArray()
             Bundle.writeArrayPlistToDocumentFolder(filename: kBookmarkFile, array: self.bookMarks)
         }
     }
-    
-    //Check the passed wheter the passed verse is bookmarked or not
+
+    // Check the passed wheter the passed verse is bookmarked or not
     func has(_ verse: Verse) -> Bool {
-        if(bookMarks != nil) {
+        if bookMarks != nil {
             for bookmark in bookMarks {
                 if let kBookmark  = bookmark as? NSDictionary {
                     if (kBookmark.object(forKey: kChapterhId) as? Int == verse.chapterId) && (kBookmark.object(forKey: kVerseId) as? Int == verse.id) {
@@ -45,9 +45,9 @@ class BookmarkService: NSObject {
         }
         return false
     }
-    
-    //Remove the passed verse from the bookmark
-    func remove(_ verse: Verse){
+
+    // Remove the passed verse from the bookmark
+    func remove(_ verse: Verse) {
         var dirty = false
         for bookmark in bookMarks {
             if let kBookmark  = bookmark as? NSDictionary {
@@ -58,59 +58,58 @@ class BookmarkService: NSObject {
                 }
             }
         }
-        
+
         if dirty {
             Bundle.writeArrayPlistToDocumentFolder(filename: kBookmarkFile, array: bookMarks)
         }
     }
-    
-    //Add the passed verse from the bookmark
-    func add(_ verse: Verse){
+
+    // Add the passed verse from the bookmark
+    func add(_ verse: Verse) {
         bookMarks.add([kChapterhId: verse.chapterId, kVerseId: verse.id])
         Bundle.writeArrayPlistToDocumentFolder(filename: kBookmarkFile, array: bookMarks)
     }
-    
-    //Remove all bookmarks
+
+    // Remove all bookmarks
     func clear() {
         bookMarks = NSMutableArray()
         Bundle.writeArrayPlistToDocumentFolder(filename: kBookmarkFile, array: bookMarks)
     }
-    
-    //Check if the bookmark list is empty
-    func isEmpty () -> Bool{
+
+    // Check if the bookmark list is empty
+    func isEmpty () -> Bool {
         return bookMarks.count == 0
     }
-    
-    
-    //Get a list of keys and contents from the persistent data
+
+    // Get a list of keys and contents from the persistent data
     // to be used in the tableview
-    func sortedKeysAndContents() -> (keys: NSMutableArray, contents: NSMutableDictionary){
+    func sortedKeysAndContents() -> (keys: NSMutableArray, contents: NSMutableDictionary) {
         let sortedBookmarksByChapter: NSArray = bookMarks.sortedArray(using: [NSSortDescriptor(key: kChapterhId, ascending: true)]) as NSArray
         let sortedBookmarksByVerse: NSArray = bookMarks.sortedArray(using: [NSSortDescriptor(key: kVerseId, ascending: true)]) as NSArray
-        
-        let contents:NSMutableDictionary = [:]
-        let keys:NSMutableArray = []
-        
+
+        let contents: NSMutableDictionary = [:]
+        let keys: NSMutableArray = []
+
         var chapter: Chapter
         var verse: Verse
         var values: NSMutableArray
         var key: String
-        
-        //Construct the key list with empty content
+
+        // Construct the key list with empty content
         for item in sortedBookmarksByChapter {
             chapter = dollar.chapters[(item as AnyObject).object(forKey: kChapterhId) as! Int]
             key = dollar.getKeyId(chapter)
-            if (contents.object(forKey: key) == nil) {
+            if contents.object(forKey: key) == nil {
                 keys.add(key)
                 contents.setObject(NSMutableArray(), forKey: key as NSCopying)
             }
         }
-        
-        //fill in the content of the keys
+
+        // fill in the content of the keys
         for item in sortedBookmarksByVerse {
             chapter = dollar.chapters[(item as AnyObject).object(forKey: kChapterhId) as! Int]
             key = dollar.getKeyId(chapter)
-            if (contents.object(forKey: key) != nil) {
+            if contents.object(forKey: key) != nil {
                 values = (contents.object(forKey: key) as? NSMutableArray)!
                 if (item as AnyObject).object(forKey: kChapterhId) as? Int == chapter.id {
                     var verseId: Int = ((item as AnyObject).object(forKey: kVerseId) as? Int)!

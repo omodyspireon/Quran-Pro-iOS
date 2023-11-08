@@ -21,18 +21,18 @@ struct Repeats {
 
 protocol AudioDelegate {
     func playNextChapter()
-    func scrollToVerse(_ verseId: Int, searchText:String?)
+    func scrollToVerse(_ verseId: Int, searchText: String?)
 }
 
 private let _AudioServiceSharedInstance = AudioService()
 
-class AudioService:NSObject, AVAudioPlayerDelegate {
-    
+class AudioService: NSObject, AVAudioPlayerDelegate {
+
     @objc class func sharedInstance() -> AudioService {
         return _AudioServiceSharedInstance
     }
-    
-    //hold a reference to a delegate
+
+    // hold a reference to a delegate
     var delegate: AudioDelegate?
     var currentVerseIndex: Int!
     var isPaused: Bool!
@@ -49,14 +49,13 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
     var abRepeatEndIndex: Int!
     var setupABRepeat: Bool!
 
-    
-    //hold the repeat verses and chapters string
+    // hold the repeat verses and chapters string
     var repeats: Repeats!
-    
-    //hold the player instance
+
+    // hold the player instance
     fileprivate var player: AVAudioPlayer?
-    
-    override init(){
+
+    override init() {
         super.init()
         self.isPaused = false
         self.repeats = Repeats()
@@ -73,34 +72,33 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
         self.setupABRepeat = false
     }
 
-    func initDelegation(_ delegate: AudioDelegate?){
+    func initDelegation(_ delegate: AudioDelegate?) {
         if delegate != nil {
             self.delegate = delegate
         }
     }
 
     @objc func setPlayVerse(_ verseToPlay: Verse? = nil) {
-        if(verseToPlay != nil) {
+        if verseToPlay != nil {
             self.currentVerseIndex = dollar.currentChapter.verses.index(of: verseToPlay!)
-            if(self.setupABRepeat == true) {
+            if self.setupABRepeat == true {
                 self.fullRepeatEndIndex = self.currentVerseIndex
                 setupABRepeatPlayer()
                 resetABRepeat()
             }
         }
     }
-    
-    //play the passed verse index
-    //@param verseToPlay verse to play or the first one if nothing is passed
-    @objc func play(_ verseToPlay: Verse? = nil){
+
+    // play the passed verse index
+    // @param verseToPlay verse to play or the first one if nothing is passed
+    @objc func play(_ verseToPlay: Verse? = nil) {
         // cute little demo
-        let mpic = MPNowPlayingInfoCenter.default();
+        let mpic = MPNowPlayingInfoCenter.default()
         var dic = [String: AnyObject]()
         dic[MPMediaItemPropertyTitle] = kApplicationDisplayName as AnyObject
         dic[MPMediaItemPropertyArtist] = "\(dollar.currentChapter.name) - \(dollar.currentReciter.name)" as AnyObject
         dic[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(image: UIImage(named: "launch-screen")!)
         mpic.nowPlayingInfo = dic
-
 
         var verse: Verse!
         let audioChapter: AudioChapter = dollar.currentReciter.audioChapters[dollar.currentChapter.id]
@@ -109,26 +107,25 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
             self.currentVerseIndex = 0
             setupABRepeatPlayer()
             resetABRepeat()
-            if(self.currentVerseIndex > 0) {
+            if self.currentVerseIndex > 0 {
                 verse = dollar.currentChapter.verses[currentVerseIndex]
             }
-        }
-        else{
+        } else {
             verse = verseToPlay
             // added 03/03/2017 - OM
             setupABRepeatPlayer()
             self.currentVerseIndex = dollar.currentChapter.verses.index(of: verse)
         }
-        
+
         delegate?.scrollToVerse(self.currentVerseIndex, searchText: "")
-        
+
         let path: String  = audioChapter.verseAudioPath(verse)
-        let url:URL = URL(fileURLWithPath: path, isDirectory: false)
+        let url: URL = URL(fileURLWithPath: path, isDirectory: false)
         var error: NSError?
-        
-        //remove the old player if exist
+
+        // remove the old player if exist
         self.isPaused = false
-        
+
         // create a new instance of the player the new data
         do {
             self.player = try AVAudioPlayer(contentsOf: url)
@@ -139,14 +136,14 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
         setDefaultRate()
         self.player?.prepareToPlay()
         self.player?.delegate = self
-        //set the number of loops
-        if(isFullRepeat == true || currentVerseIndex == 0) {
+        // set the number of loops
+        if isFullRepeat == true || currentVerseIndex == 0 {
             self.player?.numberOfLoops = 0
         } else {
             self.player?.numberOfLoops = self.repeats.verseCount
         }
 
-        switch(self.repeats.chapterCount) {
+        switch self.repeats.chapterCount {
         case 0:
             self.fullRepeatCount = 0
             break
@@ -173,7 +170,7 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
             break
         case 9:
             self.fullRepeatCount = 25
-            break;
+            break
         default:
             self.fullRepeatCount = 1
         }
@@ -184,43 +181,42 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
             self.isPaused = false
         }
     }
-    
-    //rest the player
+
+    // rest the player
     fileprivate func resetPlayer() {
         self.player?.stop()
         self.player?.delegate = nil
-        //self.player = nil
+        // self.player = nil
         self.isPaused = false
     }
 
     @objc func resetABRepeat() {
         self.currentVerseIndex = abRepeatStartIndex
     }
-    
+
     // MARK: AVAudioPlayerDelegate
 
-
     @objc func setupABRepeatPlayer() {
-        //if(!self.setupABRepeat) {
+        // if(!self.setupABRepeat) {
             self.setupABRepeat = true
             self.abRepeatEndIndex = dollar.currentChapter.verses.count - 1
             for verse in dollar.currentChapter.verses {
                 if ABRepeatService.sharedInstance().has(verse) {
-                    if(!didFindVerseStart) {
+                    if !didFindVerseStart {
                         didFindVerseStart = true
                         currentVerseIndex = verse.id
                         abRepeatStartIndex = currentVerseIndex
                         fullRepeatEndIndex = currentVerseIndex + 1
                         continue
                     }
-                    if(!didFindVerseEnd && didFindVerseStart) {
+                    if !didFindVerseEnd && didFindVerseStart {
                         didFindVerseEnd = true
                         abRepeatEndIndex = verse.id
                         break
                     }
                 }
             }
-        //}
+        // }
     }
 
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
@@ -230,26 +226,26 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
                 currentVerseIndex = currentVerseIndex + 1
                 play(dollar.currentChapter.verses[currentVerseIndex])
             } else {
-                if(currentVerseIndex == fullRepeatEndIndex) { // now start full repeat
+                if currentVerseIndex == fullRepeatEndIndex { // now start full repeat
                     isFullRepeat = true
                     savedCurrentVerseIndex = currentVerseIndex
                     currentVerseIndex = abRepeatStartIndex
                     fullRepeatEndIndex = fullRepeatEndIndex + 1
                     isFullRepeat = true
-                    //resetPlayer()
-                    //resetABRepeat()
+                    // resetPlayer()
+                    // resetABRepeat()
                     play(dollar.currentChapter.verses[abRepeatStartIndex])
                 } else {
                     currentVerseIndex = currentVerseIndex + 1
-                    if(currentVerseIndex == fullRepeatEndIndex) {
-                        if(currentRepeatCount >= fullRepeatCount) {
+                    if currentVerseIndex == fullRepeatEndIndex {
+                        if currentRepeatCount >= fullRepeatCount {
                             isFullRepeat = false
                             currentRepeatCount = 0
                         } else {
                             currentRepeatCount = currentRepeatCount + 1
                             currentVerseIndex = abRepeatStartIndex
-                            //resetPlayer()
-                            //resetABRepeat()
+                            // resetPlayer()
+                            // resetABRepeat()
                             play(dollar.currentChapter.verses[abRepeatStartIndex])
                         }
                     }
@@ -258,46 +254,45 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
 
             }
         }
-        //all verses has been played, check what to do next
-        else{
+        // all verses has been played, check what to do next
+        else {
             currentVerseIndex = 0
-            if(didFindVerseStart == true) {
+            if didFindVerseStart == true {
                 currentVerseIndex = abRepeatStartIndex
             }
-            
-            //resetPlayer()
-            //setupABRepeatPlayer()
-            
-            //case: 'Play chapter by chapter'
-            //check if we can play the next chapter
+
+            // resetPlayer()
+            // setupABRepeatPlayer()
+
+            // case: 'Play chapter by chapter'
+            // check if we can play the next chapter
             if self.repeats.chapterCount == 0 {
-                //ask the delegate if we can play the next chapter
+                // ask the delegate if we can play the next chapter
                 delegate?.playNextChapter()
             }
-            //case: 'Play chapter once'
+            // case: 'Play chapter once'
             else if self.repeats.chapterCount == 1 {
                 // do nothing, just stop here...
             }
-            //case: 'Keep playing chapter'
+            // case: 'Keep playing chapter'
             else if self.repeats.chapterCount >= 2 {
                 play(dollar.currentChapter.verses[abRepeatStartIndex])
             }
         }
     }
-    
+
     // MARK: Utils
-    
+
     // resume playing the current audio
     @objc func resumePlaying() {
         if self.isPaused == true {
             self.player?.play()
             self.isPaused = false
-        }
-        else{
+        } else {
             play()
         }
     }
-    
+
     // pause playing the current audio
     @objc func pausePlaying() {
         self.isPaused = true
@@ -308,7 +303,7 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
         self.isPaused = true
         self.player?.stop()
     }
-    
+
     // play the next audio if any
     @objc func playNext() {
         let total = dollar.currentChapter.verses.count
@@ -319,7 +314,7 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
             self.isPaused = false
         }
     }
-    
+
     // play the previous audio if any
     @objc func playPrevious() {
         if currentVerseIndex > 0 {
@@ -329,62 +324,62 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
             self.isPaused = false
         }
     }
-    
+
     // update the current played audio with the corrent numberOfLoops
     @objc func repeatPlay() {
-        //Case: "Keep playing verse"
+        // Case: "Keep playing verse"
         if repeats.verseCount == repeats.verses.count - 2 {
             repeats.verseCount = -1
         }
-        //other cases
-        else{
+        // other cases
+        else {
             repeats.verseCount = repeats.verseCount + 1
         }
-        
-        //set the number of loops
+
+        // set the number of loops
         self.player?.numberOfLoops = repeats.verseCount
-        
-        //save the repeat value of the disk
+
+        // save the repeat value of the disk
         dollar.setPersistentObjectForKey(repeats.verseCount as AnyObject, key: kCurrentRepeatVerseKey)
-        NotificationCenter.default.post(name: Notification.Name(rawValue: kRepatCountChangedNotification), object: nil,  userInfo: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: kRepatCountChangedNotification), object: nil, userInfo: nil)
     }
 
     // update the current played audio with the corrent numberOfLoops
     @objc func speedPlay() {
-        //Case: "Keep playing verse"
+        // Case: "Keep playing verse"
         if repeats.speedCount >= 4 {
             repeats.speedCount = 0
             self.player?.rate = 0.5
-        } //other cases
-        else{
+        } // other cases
+        else {
             repeats.speedCount = repeats.speedCount + 1
-            if(repeats.speedCount == 1) {
+            if repeats.speedCount == 1 {
                 self.player?.rate = 0.75
-            } else if(repeats.speedCount == 2) {
+            } else if repeats.speedCount == 2 {
                 self.player?.rate = 1.0
-            } else if(repeats.speedCount == 3) {
+            } else if repeats.speedCount == 3 {
                 self.player?.rate = 1.5
-            } else if(repeats.speedCount == 4) {
+            } else if repeats.speedCount == 4 {
                 self.player?.rate = 2.0
             }
         }
 
-        //save the repeat value of the disk
+        // save the repeat value of the disk
         dollar.setPersistentObjectForKey(repeats.speedCount as AnyObject, key: kCurrentSpeedVerseKey)
-        NotificationCenter.default.post(name: Notification.Name(rawValue: kSpeedCountChangeNotification), object: nil,  userInfo: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: kSpeedCountChangeNotification), object: nil, userInfo: nil)
     }
 
     // update the current played audio with the corrent numberOfLoops
     @objc func setDefaultRate() {
-        if(repeats.speedCount == 0) {
+        if repeats.speedCount == 0 {
             self.player?.rate = 0.5
-        } else if(repeats.speedCount == 1) {
+        } else if repeats.speedCount == 1 {
             self.player?.rate = 0.75
-        } else if(repeats.speedCount == 2) {
+        } else if repeats.speedCount == 2 {
             self.player?.rate = 1.0
-        } else if(repeats.speedCount == 3) {
+        } else if repeats.speedCount == 3 {
             self.player?.rate = 1.5
-        } else if(repeats.speedCount == 4) {
+        } else if repeats.speedCount == 4 {
             self.player?.rate = 2.0
         }
     }
@@ -393,18 +388,17 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
     @objc func stopAndReset() {
         resetPlayer()
     }
-    
+
     // check whether the audio is played or not
-    @objc func isPlaying() -> Bool{
+    @objc func isPlaying() -> Bool {
         return self.player != nil && self.player!.isPlaying
     }
-    
+
     // get the icon name of the repeat control
     @objc func repeatIconName() -> String {
         if repeats.verseCount == -1 {
             return "repeat-∞"
-        }
-        else{
+        } else {
             return "repeat-\(repeats.verseCount + 1)"
         }
     }
@@ -418,7 +412,7 @@ class AudioService:NSObject, AVAudioPlayerDelegate {
             return "oneandhalf"
         } else if repeats.speedCount == 4 {
             return "double"
-        } else{
+        } else {
             return "normal"
         }
     }
