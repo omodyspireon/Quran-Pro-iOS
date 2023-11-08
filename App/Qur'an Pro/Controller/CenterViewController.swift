@@ -808,7 +808,7 @@ class CenterViewController: UIViewController, UITableViewDelegate, UITableViewDa
         //As with find and replace, next create a regular expression using your convenience initializer and fetch an array of all matches for the regular expression within the label’s text.
         do {
             let regex = try NSRegularExpression(pattern: searchText, options: NSRegularExpression.Options.caseInsensitive)
-            let range = NSMakeRange(0, (label.text!).characters.count)
+            let range = NSMakeRange(0, (label.text!).count)
             let matches = regex.matches(in: label.text!, options: [], range: range)
             //Loop through each match (casting them as NSTextCheckingResult objects), and add a yellow colour background attribute for each one.
             for match in matches as [NSTextCheckingResult] {
