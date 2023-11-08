@@ -14,7 +14,7 @@ extension UIViewController {
     @objc func askUserForPurchasingProVersion(_ logsKey: String) {
         // NSNotificationCenter.defaultCenter().postNotificationName(kOpenSKControllerNotification, object: nil,  userInfo: nil)
         FlurryEvent.logPurchase(logsKey)
-        UIApplication.shared.openURL(URL(string: kAppUrl.localizeWithFormat(kQuranProId))!)
+        UIApplication.shared.open(URL(string: kAppUrl.localizeWithFormat(kQuranProId))!)
     }
 
     @objc public func productViewControllerDidFinish(_ viewController: SKStoreProductViewController) {
@@ -151,7 +151,7 @@ extension UIViewController {
             "Something went wrong during downloading, please try later on again.".local, preferredStyle: UIAlertController.Style.alert)
         alertController.addAction(UIAlertAction(title: "Cancel".local, style: UIAlertAction.Style.default, handler: nil))
         self.present(alertController, animated: true, completion: nil)
-        let moreInfo = "[currentKey: \(dollar.currentLanguageKey), NSUserDefaultsLanguageKey: \(UserDefaults.currentLanguageKey())]"
+        let /*moreInfo*/ _ = "[currentKey: \(dollar.currentLanguageKey ?? "currentLanguage"), NSUserDefaultsLanguageKey: \(UserDefaults.currentLanguageKey() ?? "currentLanguage")]"
         // Flurry.logError(FlurryEvent.downloadError, message: "Something went wrong during downloading, please try later on again. \(moreInfo)", error: nil)
     }
 

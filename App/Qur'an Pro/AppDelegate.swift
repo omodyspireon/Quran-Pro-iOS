@@ -170,9 +170,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         try! AVAudioSession.sharedInstance().setActive(true)
 
-        if appUrlToOpen != nil {
-            UIApplication.shared.openURL(URL(string: appUrlToOpen!)!)
-            appUrlToOpen = nil
+        if let appUrlToOpen {
+            UIApplication.shared.open(URL(string: appUrlToOpen)!)
+            self.appUrlToOpen = nil
         }
     }
 
