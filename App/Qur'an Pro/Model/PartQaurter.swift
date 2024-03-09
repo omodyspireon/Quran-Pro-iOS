@@ -10,39 +10,36 @@
 import Foundation
 
 class PartQuarter: CustomStringConvertible {
-    
+
     var parentId: Int
     var chapterId: Int
     var verseId: Int
     var type: PartQuarterType
     var hizbId: Int
-    
-    init(parentId: Int, chapterId: Int, verseId: Int, type: PartQuarterType, hizbId: Int){
+
+    init(parentId: Int, chapterId: Int, verseId: Int, type: PartQuarterType, hizbId: Int) {
         self.parentId = parentId
         self.chapterId = chapterId
         self.verseId = verseId
         self.type = type
         self.hizbId = hizbId
     }
-    
+
     var description: String {
         return "parentId: \(parentId), chapterid: \(chapterId), verseId: \(verseId), type: \(type)"
     }
-    
+
     func display() -> String {
         if self.type == .one {
             return "Ḥizb ﴾\(hizbId)﴿"
-        }
-        else if self.type == .oneFourth{
+        } else if self.type == .oneFourth {
             return "1/4 ḥizb"
-        }
-        else if self.type == .half{
+        } else if self.type == .half {
             return "1/2 ḥizb"
-        }
-        else if self.type == .threeFourth{
+        } else if self.type == .threeFourth {
             return "3/4 ḥizb"
         }
-        
+
         return ""
     }
 }

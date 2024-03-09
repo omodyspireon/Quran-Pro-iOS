@@ -11,22 +11,21 @@ import UIKit
 
 let chapterPlayOptionCellId = "chapterPlayOptionCellId"
 class ChapterPlayOptionViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
- 
+
     @objc var service: AudioService = AudioService.sharedInstance()
     @IBOutlet var tableView: UITableView!
 
     @objc var contents: NSMutableDictionary!
     @objc var keys: NSArray!
-    
-    //keep the reference to the options
+
+    // keep the reference to the options
     @objc var options: Array<String>!
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         overrideBackButton()
     }
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: chapterPlayOptionCellId)
@@ -36,9 +35,9 @@ class ChapterPlayOptionViewController: UIViewController, UITableViewDataSource, 
     }
 
     // MARK: intiate the data
-    @objc func createData (){
+    @objc func createData () {
 
-        //keys:
+        // keys:
         let key1: String = "Verse view".local
         let key2: String = "Arabic font".local
         let key3: String = "Font size".local
@@ -65,16 +64,15 @@ class ChapterPlayOptionViewController: UIViewController, UITableViewDataSource, 
         self.contents = [key1: key1Content, key2: key2Content, key3: key3Content]
     }
 
-
-    // MARK:  UITextFieldDelegate Methods
+    // MARK: UITextFieldDelegate Methods
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return options.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: chapterPlayOptionCellId, for: indexPath) as UITableViewCell
         cell.textLabel?.font = kCellTextLabelFont
@@ -83,33 +81,29 @@ class ChapterPlayOptionViewController: UIViewController, UITableViewDataSource, 
             if service.repeats.chapterCount == indexPath.row {
                 cell.accessoryType = UITableViewCell.AccessoryType.checkmark
                 cell.selectionStyle = UITableViewCell.SelectionStyle.none
-            }
-            else{
+            } else {
                 cell.accessoryType = UITableViewCell.AccessoryType.none
             }
-        }
-        else{
+        } else {
             if indexPath.row == 0 {
                 cell.accessoryType = UITableViewCell.AccessoryType.checkmark
                 cell.selectionStyle = UITableViewCell.SelectionStyle.none
-            }
-            else{
+            } else {
                 cell.lock()
             }
         }
         return cell
     }
-    
-    // MARK:  UITableViewDelegate Methods
+
+    // MARK: UITableViewDelegate Methods
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if isPro {
             service.repeats.chapterCount = indexPath.row
             dollar.setPersistentObjectForKey(indexPath.row as AnyObject, key: kCurrentRepeatChapterhKey)
             tableView.reloadData()
-            //Flurry.logEvent(FlurryEvent.chapterPlayOption, withParameters: ["value": indexPath.row])
-        }
-        else if indexPath.row != 0 {
+            // Flurry.logEvent(FlurryEvent.chapterPlayOption, withParameters: ["value": indexPath.row])
+        } else if indexPath.row != 0 {
             self.askUserForPurchasingProVersion(FlurryEvent.chapterPlayOption)
         }
     }

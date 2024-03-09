@@ -10,7 +10,7 @@
 import UIKit
 
 // Define the menu option
-enum SettingType : Int {
+enum SettingType: Int {
     case settingTypeSearch = 0,
     settingTypeBookmark,
     settingTypeAudioDownload,
@@ -30,14 +30,14 @@ class Setting: CustomStringConvertible {
     var name: String!
     var icon: UIImage!
     var type: SettingType!
-    
-    init(name: String, imageName: String, type:SettingType){
+
+    init(name: String, imageName: String, type: SettingType) {
         self.name = name
         self.icon = UIImage(named: imageName)
         self.type = type
     }
-    
+
     var description: String {
-        return "name= \(name) type=\(type)"
+        return "name= \(name ?? "name") type=\(type ?? .settingTypeAppReview)"
     }
 }

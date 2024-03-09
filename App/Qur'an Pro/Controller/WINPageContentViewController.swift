@@ -10,15 +10,15 @@
 import Foundation
 
 class WINPageContentViewController: UIViewController {
-    
+
     @IBOutlet weak var titleLabel: UILabel!
-    
+
     @IBOutlet weak var backgroundImageView: UIImageView!
-    
+
     @IBOutlet weak var exitButton: UIButton!
-    
+
     @IBOutlet weak var whatIsNewLabel: UILabel!
-    
+
     @objc var pageIndex: Int = 0
     @objc var titleText: String = ""
     @objc var imageName: String = ""
@@ -32,11 +32,11 @@ class WINPageContentViewController: UIViewController {
         layer.shadowOpacity = 0.6
         layer.shadowRadius = 5
         layer.shadowOffset = CGSize(width: 3, height: 3)
-        
+
         whatIsNewLabel.text = labelVersion
-        
+
         self.titleLabel.text = titleText
-        
+
         self.exitButton.setTitle(" " + "Continue".local + " ", for: UIControl.State())
         self.exitButton.titleLabel?.textColor = kAppColor
         self.exitButton.layer.borderWidth = 0.1
@@ -47,8 +47,8 @@ class WINPageContentViewController: UIViewController {
         self.exitButton.layer.shadowRadius = 5
         self.exitButton.layer.shadowOffset = CGSize(width: 3, height: 3)
     }
-    
+
     @IBAction func exitHandler(_ sender: AnyObject) {
-        NotificationCenter.default.post(name: Notification.Name(rawValue: kExitWhatIsNewVCNotification), object: nil,  userInfo:nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: kExitWhatIsNewVCNotification), object: nil, userInfo: nil)
     }
 }

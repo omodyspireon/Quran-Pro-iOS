@@ -10,14 +10,13 @@
 import UIKit
 
 class DownloadCell: UITableViewCell {
-    
-    @IBOutlet var chapterName:UILabel!
-    @IBOutlet var downloadState:UILabel!
-    @IBOutlet var downlaodSize:UILabel!
-    @IBOutlet var downloadPercentage:UILabel!
+
+    @IBOutlet var chapterName: UILabel!
+    @IBOutlet var downloadState: UILabel!
+    @IBOutlet var downlaodSize: UILabel!
+    @IBOutlet var downloadPercentage: UILabel!
     @IBOutlet weak var progressView: ABCircularProgressView!
-    
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         self.isDownloading = false
@@ -31,7 +30,7 @@ class DownloadCell: UITableViewCell {
         downlaodSize.font = kPercentageFont
         downlaodSize.textColor = kCellTextLabelColor
     }
-    
+
     var isDownloading: Bool! {
         didSet {
             if isDownloading == false {
@@ -39,8 +38,7 @@ class DownloadCell: UITableViewCell {
                 downloadPercentage.isHidden = true
                 downlaodSize.isHidden = false
                 downloadState.isHidden = false
-            }
-            else{
+            } else {
                 downlaodSize.isHidden = true
                 downloadState.isHidden = true
                 progressView.isHidden = false

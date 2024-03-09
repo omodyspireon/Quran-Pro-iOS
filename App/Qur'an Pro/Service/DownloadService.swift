@@ -9,9 +9,9 @@
 import Foundation
 
 let identifier: String = "group.com.bitbucket.benmoussa.islam.quranpro"
-typealias CompleteHandlerBlock = () -> ()
+typealias CompleteHandlerBlock = () -> Void
 
-enum MirrorIndex : Int {
+enum MirrorIndex: Int {
     case error = -1
     case abm
     case pma
@@ -22,37 +22,36 @@ enum MirrorIndex : Int {
 private let _DownloadServiceSharedInstance = DownloadService()
 
 class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
-    
+
     @objc class func sharedInstance() -> DownloadService {
         return _DownloadServiceSharedInstance
     }
-    
-    //var mirrors: Array<String?> = [String?](count:4, repeatedValue: nil)
-    var handlerQueue: [String : CompleteHandlerBlock]!
+
+    // var mirrors: Array<String?> = [String?](count:4, repeatedValue: nil)
+    var handlerQueue: [String: CompleteHandlerBlock]!
     @objc var session: Foundation.URLSession!
     @objc var sessionConfiguration: URLSessionConfiguration!
 
-    override init(){
+    override init() {
         super.init()
         self.sessionConfiguration = URLSessionConfiguration.background(withIdentifier: identifier)
         self.sessionConfiguration.httpMaximumConnectionsPerHost = 5
         self.session = Foundation.URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: nil)
     }
-    
-    //MARK: completion handler
+
+    // MARK: completion handler
     @objc func addCompletionHandler(_ handler: @escaping CompleteHandlerBlock, identifier: String) {
         handlerQueue[identifier] = handler
     }
-    
+
     @objc func callCompletionHandlerForSession(_ identifier: String!) {
-        if let handler : CompleteHandlerBlock = handlerQueue[identifier]{
+        if let handler: CompleteHandlerBlock = handlerQueue[identifier] {
             handlerQueue!.removeValue(forKey: identifier)
             handler()
         }
     }
-    
-    
-    func getAudioChapterWithTaskIdentifier(_ taskIdentifier: Int) -> AudioChapter?{
+
+    func getAudioChapterWithTaskIdentifier(_ taskIdentifier: Int) -> AudioChapter? {
         for  chapter in dollar.currentReciter.audioChapters {
             if chapter.taskIdentifier == taskIdentifier {
                 return chapter
@@ -60,21 +59,21 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
         }
         return nil
     }
-    
+
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        print("session error: \(error?.localizedDescription).")
+        print("session error: \(String(describing: error?.localizedDescription)).")
     }
-    
+
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         completionHandler(Foundation.URLSession.AuthChallengeDisposition.useCredential, URLCredential(trust: challenge.protectionSpace.serverTrust!))
     }
-    
+
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         print("session \(session) has finished the download task \(downloadTask) of URL \(location).")
-        
+
         if let audiChapter: AudioChapter = getAudioChapterWithTaskIdentifier(downloadTask.taskIdentifier) {
             let fm: FileManager = FileManager.default
-            
+
             if fm.fileExists(atPath: audiChapter.downloadLocation) {
                 do {
                     try fm.removeItem(atPath: audiChapter.downloadLocation)
@@ -82,14 +81,14 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
                 }
             }
 
-            //if (location.absoluteString?.pathExtension == "gzip") {
-                //print(audiChapter.downloadFolder)
+            // if (location.absoluteString?.pathExtension == "gzip") {
+                // print(audiChapter.downloadFolder)
                 // when expanding the zip file, the chapter filder name will be automaticatly created
 
                 do {
                     try NVHTarGzip.sharedInstance().unTarGzipFile(atPath: location.path, toPath: audiChapter.downloadFolder + audiChapter.folderName)
 
-                //if SSZipArchive.unzipFileAtPath(location.path!, toDestination: audiChapter.downloadFolder) {
+                // if SSZipArchive.unzipFileAtPath(location.path!, toDestination: audiChapter.downloadFolder) {
 
                     // Change the flag values of the respective audiChapter object.
                     audiChapter.isDownloading = false
@@ -105,7 +104,7 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
 
                     // Notify the ui about those changes
                     OperationQueue.main.addOperation({
-                        NotificationCenter.default.post(name: Notification.Name(rawValue: kDownloadCompleteNotification), object: nil,  userInfo:["audiChapter": audiChapter])
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: kDownloadCompleteNotification), object: nil, userInfo: ["audiChapter": audiChapter])
                     })
 
                     do {
@@ -117,7 +116,7 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
                     // Something went wrong, it seems the file couldn't be downloaded from the mirror
                     // Notify the ui about those changes
                     OperationQueue.main.addOperation({
-                        NotificationCenter.default.post(name: Notification.Name(rawValue: kDownloadErrorNotification), object: nil,  userInfo:["audiChapter": audiChapter])
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: kDownloadErrorNotification), object: nil, userInfo: ["audiChapter": audiChapter])
                     })
                 }
 //            }
@@ -160,14 +159,13 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
 
         }
     }
-    
+
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        //println("session \(session) download task \(downloadTask) wrote an additional \(bytesWritten) bytes (total \(totalBytesWritten) bytes) out of an expected \(totalBytesExpectedToWrite) bytes.")
-        
+        // println("session \(session) download task \(downloadTask) wrote an additional \(bytesWritten) bytes (total \(totalBytesWritten) bytes) out of an expected \(totalBytesExpectedToWrite) bytes.")
+
         if totalBytesExpectedToWrite == NSURLSessionTransferSizeUnknown {
 //            println("Unknown transfer size");
-        }
-        else{
+        } else {
             // locate the audio chapter being downloaded based on the task indentifier 
             if let audiChapter: AudioChapter = getAudioChapterWithTaskIdentifier(downloadTask.taskIdentifier) {
                 OperationQueue.main.addOperation({
@@ -175,22 +173,21 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
                     let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
                     if Int(progress  * 100) != 100 {
                         audiChapter.downloadProgress = progress
-                        NotificationCenter.default.post(name: Notification.Name(rawValue: kProgressUpdatedNotification), object: nil,  userInfo:["audiChapter": audiChapter])
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: kProgressUpdatedNotification), object: nil, userInfo: ["audiChapter": audiChapter])
                     }
                 })
             }
         }
     }
-    
-    
+
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
         print("session \(session) download task \(downloadTask) resumed at offset \(fileOffset) bytes out of an expected \(expectedTotalBytes) bytes.")
     }
-    
+
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if error == nil {
             print("session \(session) download completed")
-            
+
             /*
             if !session.configuration.identifier!.isEmpty {
                 callCompletionHandlerForSession(session.configuration.identifier)
@@ -207,17 +204,17 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
             }
     */
         } else {
-            print("session \(session) download failed with error \(error?.localizedDescription)")
+            print("session \(session) download failed with error \(String(describing: error?.localizedDescription))")
             if let audiChapter: AudioChapter = getAudioChapterWithTaskIdentifier(task.taskIdentifier) {
                 // Something went wrong, it seems the file couldn't be downloaded from the mirror
                 // Notify the ui about those changes
                 OperationQueue.main.addOperation({
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: kDownloadErrorNotification), object: nil,  userInfo:["audiChapter": audiChapter])
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: kDownloadErrorNotification), object: nil, userInfo: ["audiChapter": audiChapter])
                 })
             }
         }
     }
-    
+
 //    func hasPendingTasks(downloadTasks: [NSURLSessionDownloadTask])-> Bool {
 //        var output: Bool = false
 //        for task in downloadTasks {
@@ -228,10 +225,10 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
 //        }
 //        return output
 //    }
-    
+
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
         print("background session \(session) finished events.")
-        
+
 //        if !session.configuration.identifier!.isEmpty {
 //            callCompletionHandlerForSession(session.configuration.identifier)
 //        }
@@ -249,22 +246,21 @@ class DownloadService: NSObject, URLSessionDelegate, URLSessionDownloadDelegate 
 }
 
 class PlistDownloader {
-    //http://stackoverflow.com/questions/30722971/swift-datataskwithrequest-completion-block-not-executed
-    
-    class func load(_ url: String, finished:@escaping (NSObject)->(), fault:@escaping (NSError)->()) {
+    // http://stackoverflow.com/questions/30722971/swift-datataskwithrequest-completion-block-not-executed
+
+    class func load(_ url: String, finished: @escaping (NSObject) -> Void, fault: @escaping (NSError) -> Void) {
         let dest = URL(string: url)
         let request = URLRequest(url: dest!, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5.0)
         let task = URLSession.shared.dataTask(with: request, completionHandler: {
-            data, response, error in
-            if(error != nil){
+            data, _, error in
+            if error != nil {
                 fault(error! as NSError)
-            }
-            else{
-                let v:NSArray?
+            } else {
+                let v: NSArray?
                 do {
                     v = try PropertyListSerialization.propertyList(from: data!, options: PropertyListSerialization.MutabilityOptions(), format: nil) as? NSArray
                     finished(v!)
-                } catch  {
+                } catch {
                     v = nil
                 }
             }
@@ -275,4 +271,3 @@ class PlistDownloader {
 
 // Simplfy the data manager call to the $$ sign
 var DS: DownloadService = DownloadService.sharedInstance()
-

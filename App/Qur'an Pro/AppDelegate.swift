@@ -11,31 +11,29 @@ import UIKit
 import AVFoundation
 import MessageUI
 
-enum UIUserInterfaceIdiom : Int {
+enum UIUserInterfaceIdiom: Int {
     case unspecified
     case phone // iPhone and iPod touch style UI
     case pad // iPad style UI
 }
 
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMailComposeViewControllerDelegate {
 
     var window: UIWindow?
-    @objc var appUrlToOpen:String?
+    @objc var appUrlToOpen: String?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+
 //        if !isDebug {
 //            //Flurry.startSession(kFlurryAPIKey, withOptions: launchOptions)
 //            //Flurry.setAppVersion(kApplicationVersion as String)
 //            //Flurry.setCrashReportingEnabled(true)
 //        }
-        
-        
-        //Parse.setApplicationId(kParseAppId, clientKey: kParseClientKey)
-        
-        //Set the app rate system
+
+        // Parse.setApplicationId(kParseAppId, clientKey: kParseClientKey)
+
+        // Set the app rate system
         Appirater.setAppId(kAppId)
         Appirater.setDaysUntilPrompt(7)
         Appirater.setUsesUntilPrompt(5)
@@ -43,21 +41,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
         Appirater.setTimeBeforeReminding(2)
         Appirater.setDebug(false)
         Appirater.setDelegate(self)
-        //Appirater.setCustomAlertSendFriendButtonTitle("Tell a friend".local)
-        
-        //Style the navigation bar
+        // Appirater.setCustomAlertSendFriendButtonTitle("Tell a friend".local)
+
+        // Style the navigation bar
         UINavigationBar.appearance().tintColor = kUINavigationBarTintColor
         UINavigationBar.appearance().backgroundColor = UIColor(red: 79, green: 106, blue: 173)
 
         UINavigationBar.appearance().setBackgroundImage(UIImage(named: kUINavigationBarBackgroundImage), for: UIBarMetrics.default)
-        //let shadow = NSShadow()
-        //shadow.shadowOffset = kUINavigationBarTitleShadowSize
-        
+        // let shadow = NSShadow()
+        // shadow.shadowOffset = kUINavigationBarTitleShadowSize
+
         UINavigationBar.appearance().titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: kUINavigationBarTitleColor,
-            //NSShadowAttributeName: shadow,
+            // NSShadowAttributeName: shadow,
             NSAttributedString.Key.font.rawValue: kUINavigationBarTitleFont
         ])
-        
+
         if #available(iOS 15.0, *) {
             let navBarAppearance = UINavigationBarAppearance()
             navBarAppearance.configureWithOpaqueBackground()
@@ -67,23 +65,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
             UINavigationBar.appearance().standardAppearance = navBarAppearance
             UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
         }
-        
-        //Style the status bar
+
+        // Style the status bar
         UIApplication.shared.setStatusBarStyle(kUIStatusBarStyle, animated: false)
-        
+
         UIApplication.shared.beginReceivingRemoteControlEvents()
         self.becomeFirstResponder()
-        
+
         // Inits the data service
-        DataService.sharedInstance()
-        
+        let _ = DataService.sharedInstance()
+
         // Inits the download service
-        DownloadService.sharedInstance()
-        
+        let _ = DownloadService.sharedInstance()
+
         // Bookmarks service
-        BookmarkService.sharedInstance()
-        
-        if(UIApplication.instancesRespond(to: #selector(UIApplication.registerUserNotificationSettings(_:)))) {
+        let _ = BookmarkService.sharedInstance()
+
+        if UIApplication.instancesRespond(to: #selector(UIApplication.registerUserNotificationSettings(_:))) {
             UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge], categories: nil))
         }
 
@@ -95,14 +93,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
             error = error1
         }
         if error != nil {
-            //Flurry.logError(FlurryEvent.enableAudioSession, message: error!.description, error: error)
+            // Flurry.logError(FlurryEvent.enableAudioSession, message: error!.description, error: error)
         }
-        
+
         let pageControl = UIPageControl.appearance()
         pageControl.pageIndicatorTintColor = UIColor.lightGray
         pageControl.currentPageIndicatorTintColor = UIColor.black
         pageControl.backgroundColor = UIColor.white
-        
+
 //        // Register for Push Notitications
 //        if application.applicationState != UIApplicationState.Background {
 //            
@@ -120,7 +118,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
 //                PFAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
 //            }
 //        }
-        
+
 //        if application.respondsToSelector("registerUserNotificationSettings:") {
 //            let userNotificationTypes:UIUserNotificationType  = [.Alert, .Badge, .Sound]
 //            //let userNotificationTypes = UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound
@@ -139,19 +137,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
 //             }
 //        }
 
-        
         Appirater.appLaunched(true)
-        
+
         return true
     }
-    
-    override var canBecomeFirstResponder : Bool {
+
+    override var canBecomeFirstResponder: Bool {
         return true
     }
-    
-    //hadle the remote actions
+
+    // hadle the remote actions
     override func remoteControlReceived(with event: UIEvent?) {
-        NotificationCenter.default.post(name: Notification.Name(rawValue: kBeginReceivingRemoteControlEvents), object: event,  userInfo:nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: kBeginReceivingRemoteControlEvents), object: event, userInfo: nil)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -172,17 +169,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         try! AVAudioSession.sharedInstance().setActive(true)
-        
-        if appUrlToOpen != nil {
-            UIApplication.shared.openURL(URL(string: appUrlToOpen!)!)
-            appUrlToOpen = nil
+
+        if let appUrlToOpen {
+            UIApplication.shared.open(URL(string: appUrlToOpen)!)
+            self.appUrlToOpen = nil
         }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-    
+
 //    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
 //        let installation = PFInstallation.currentInstallation()
 //        installation!.setDeviceTokenFromData(deviceToken)
@@ -243,12 +240,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
 //        completionHandler(UIBackgroundFetchResult.NoData)
 //     }
 
-    
-    func backgroundFetchResultcompletionHandler(_ result: UIBackgroundFetchResult?) ->() {
+    func backgroundFetchResultcompletionHandler(_ result: UIBackgroundFetchResult?) {
 //        print("backgroundFetchResultcompletionHandler")
     }
-    
-    //MARK: background session handling
+
+    // MARK: background session handling
     func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
 //        print("-- handleEventsForBackgroundURLSession --")
 //        let backgroundConfiguration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier)
@@ -256,22 +252,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
 //        print("Rejoining session \(backgroundSession)")
 //        self.delegate.addCompletionHandler(completionHandler, identifier: identifier)
     }
-    
-    
+
     func appiraterDidDecline(toRate appirater: Appirater) {
-        //Flurry.logEvent(FlurryEvent.appiraterDidDeclineToRate)
+        // Flurry.logEvent(FlurryEvent.appiraterDidDeclineToRate)
     }
-    
+
     func appiraterDidOpt(toRate appirater: Appirater) {
-        //Flurry.logEvent(FlurryEvent.appiraterDidOptToRate)
+        // Flurry.logEvent(FlurryEvent.appiraterDidOptToRate)
     }
-    
+
     func appiraterDidOpt(toRemindLater appirater: Appirater) {
-        //Flurry.logEvent(FlurryEvent.appiraterDidOptToRemindLater)
+        // Flurry.logEvent(FlurryEvent.appiraterDidOptToRemindLater)
     }
-    
+
     @objc func appiraterDidOptToMail(_ appirater: Appirater) {
-        //Flurry.logEvent(FlurryEvent.appiraterDidOptToMail)
+        // Flurry.logEvent(FlurryEvent.appiraterDidOptToMail)
         let tellAFriendMail = MFMailComposeViewController()
         tellAFriendMail.mailComposeDelegate = self
         tellAFriendMail.setSubject("Tell a friend subject".local)
@@ -279,10 +274,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
         tellAFriendMail.setMessageBody(message.localizeWithFormat(dollar.currentLanguageKey, kAppId), isHTML: true)
         self.window?.rootViewController?.present(tellAFriendMail, animated: true, completion: nil)
     }
-    
-    //MARK: MFMailComposeViewController delegate
-    //this is duplicate!!!
-    func mailComposeController(_ controller:MFMailComposeViewController, didFinishWith result:MFMailComposeResult, error:Error?) {
+
+    // MARK: MFMailComposeViewController delegate
+    // this is duplicate!!!
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
 //        switch result.rawValue {
 //        case MFMailComposeResult.cancelled.rawValue:
 //            //Flurry.logEvent(FlurryEvent.tellAfriendMailCancelled)
@@ -299,14 +294,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppiraterDelegate, MFMail
     }
 }
 
-
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
 	guard let input = input else { return nil }
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
 	return input.rawValue
 }

@@ -10,13 +10,13 @@
 import Foundation
 
 class Reciter: Equatable, CustomStringConvertible {
-    
+
     var id: Int
     var name: String
-    var audioChapters: Array<AudioChapter>
-    var mirrors: Array<String?>
+    var audioChapters: [AudioChapter]
+    var mirrors: [String?]
     var mirrorIndex: MirrorIndex
-    
+
     init (id: Int, name: String) {
         self.id = id
         self.name = name
@@ -24,13 +24,12 @@ class Reciter: Equatable, CustomStringConvertible {
         mirrors = [String?](repeating: nil, count: 4)
         mirrorIndex = MirrorIndex.abm
     }
-    
+
     var description: String {
         return "id= \(id), name= \(name), mirrors= \(mirrors)"
     }
 }
 
-func == (lhs:Reciter,rhs:Reciter) -> Bool {
+func == (lhs: Reciter, rhs: Reciter) -> Bool {
     return lhs.id == rhs.id && lhs.name == rhs.name
 }
-

@@ -13,11 +13,11 @@ import QuartzCore
 extension UITableViewCell {
     @objc func lock () {
         self.accessoryView = UIImageView(image: UIImage(named: "lock-disabled"))
-        self.contentView.layer.opacity = 0.4;
+        self.contentView.layer.opacity = 0.4
     }
-    
+
     @objc func unlock() {
         self.accessoryView = nil
-        self.contentView.layer.opacity = 1;
+        self.contentView.layer.opacity = 1
     }
 }

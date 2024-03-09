@@ -14,7 +14,7 @@ extension UIColor {
         let newRed   = CGFloat(Double(red) / 255.0)
         let newGreen = CGFloat(Double(green) / 255.0)
         let newBlue  = CGFloat(Double(blue) / 255.0)
-        
+
         self.init(red: newRed, green: newGreen, blue: newBlue, alpha: CGFloat(1.0))
     }
 }

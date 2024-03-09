@@ -10,20 +10,20 @@
 import Foundation
 
 class FlurryEvent {
-    
-    //init
+
+    // init
     static let appStarted: String = "AppStarted"
-    
-    //chapter
+
+    // chapter
     static let toggleChapterPanel: String = "ToggleChapterPanel"
     static let chapterSelected: String = "ChapterSelected"
     static let sestionSelected: String = "SectionSelected"
     static let verseViaSectionSelected: String = "VerseViaSectionSelected"
-    
-    //more
+
+    // more
     static let toggleMorePanel: String = "ToggleMorePanel"
-    
-    //download
+
+    // download
     static let downloadFromChapter: String = "DownloadFromChapter"
     static let downloadFromRow: String = "DownloadFromRow"
     static let downloadFrom3G: String = "DownloadFrom3G"
@@ -37,70 +37,69 @@ class FlurryEvent {
     static let pauseAllDownloads: String = "PauseAllDownloads"
     static let downloadError: String = "DownloadError"
     static let downloadDead: String = "DownloadDead"
-    
-    //search
+
+    // search
     static let searchOption: String = "SearchOption"
     static let searchQuery: String = "SearchQuery"
-    
-    //bookmark
+
+    // bookmark
     static let totalBookmarks: String = "TotalBookmarks"
     static let removeAllBookmarks: String = "RemoveAllBookmarks"
     static let addBookmark: String = "AddBookmark"
     static let removeBookmark: String = "RemoveBookmark"
     static let copy: String = "copy"
-    
-    //reciter
+
+    // reciter
     static let reciterSelected: String = "ReciterSelected"
-    
-    //verse play options
+
+    // verse play options
     static let versePlayOption: String = "VersePlayOption"
-    
-    //chapter play option
+
+    // chapter play option
     static let chapterPlayOption: String = "ChapterPlayOption"
-    
-    //chapter view option
+
+    // chapter view option
     static let chapterViewOption: String = "ChapterViewOption"
-    
-    //audio player
+
+    // audio player
     static let playerLoadFile: String = "PlayerLoadFile"
     static let playerAudioFromRow: String = "PlayerAudioFromRow"
     static let stopPlayingAudioFromRow: String = "StopPlayingAudioFromRow"
-    
-    //translation
+
+    // translation
     static let translationSelected: String = "TranslationSelected"
     static let removeTranslation: String = "RemoveTranslation"
-    
-    //audio session
+
+    // audio session
     static let enableAudioSession: String = "EnableAudioSession"
-    
-    //Tell a friend
+
+    // Tell a friend
     static let tellAfriendMailCancelled: String = "TellAfriendMailCancelled"
     static let tellAfriendSaved: String = "TellAfriendMailSaved"
     static let tellAfriendMailSent: String = "TellAfriendMailSent"
     static let tellAfriendMailFaild: String = "TellAfriendMailFaild"
-    
+
     static let appiraterDidOptToMail: String = "appiraterDidOptToMail"
     static let appiraterDidDeclineToRate: String = "appiraterDidDeclineToRate"
     static let appiraterDidOptToRate: String = "appiraterDidOptToRate"
     static let appiraterDidOptToRemindLater: String = "appiraterDidOptToRemindLater"
-    
-    
-    //write a review
+
+    // write a review
     static let writeAReview: String = "WriteAReviewSelected"
-    
-    //islamic apps selected
+
+    // islamic apps selected
     static let islamicApps: String = "islamicAppsSelected"
-    
-    //social
+
+    // social
     static let share: String = "Share"
     static let sharedViaFacebookCancelled: String = "SharedViaFacebookCancelled"
     static let sharedViaFacebookDone: String = "SharedViaFacebookDone"
     static let sharedViaTwitterCancelled: String = "SharedViaTwitterCancelled"
     static let sharedViaTwitterDone: String = "SharedViaTwitterDone"
     static let purchase: String = "Purchase"
-    
+
     static func logPurchase(_ key: String) {
-        //Flurry.logEvent("\(FlurryEvent.purchase)_\(key)")
+        // Flurry.logEvent("\(FlurryEvent.purchase)_\(key)")
     }
-    
+
 }

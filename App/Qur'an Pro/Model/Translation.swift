@@ -9,20 +9,19 @@
 
 import Foundation
 
-
 class Translation: CustomStringConvertible {
-    
+
     var id: String!
     var name: String!
     var icon: UIImage!
-    
+
     init (id: String, name: String, iconName: String) {
         self.id = id
         self.name = name
         self.icon = UIImage(named: iconName)
     }
-    
+
     var description: String {
-        return "id= \(id), name= \(name)"
+        return "id= \(id ?? "id"), name= \(name ?? "name")"
     }
 }

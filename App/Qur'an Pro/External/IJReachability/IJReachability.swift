@@ -14,8 +14,7 @@ public enum IJReachabilityType {
     notConnected
 }
 
-
-struct NetworkStatusConstants  {
+struct NetworkStatusConstants {
     static let kNetworkAvailabilityStatusChangeNotification = "kNetworkAvailabilityStatusChangeNotification"
     static let Status = "Status"
     static let Offline = "Offline"
@@ -58,8 +57,7 @@ open class IJReachability {
 
     open class func isConnectedToNetworkOfType() -> IJReachabilityType {
 
-
-        //MARK: - TODO Check this when I have an actual iOS 9 device.
+        // MARK: - TODO Check this when I have an actual iOS 9 device.
         if !self.isConnectedToNetwork() {
             return .notConnected
         }
@@ -96,8 +94,6 @@ open class IJReachability {
         return .notConnected
     }
 
-
-
     ///
     /// Usage:
     ///
@@ -129,7 +125,7 @@ open class IJReachability {
 
         SCNetworkReachabilitySetCallback(reachability, { (_, flags, _) in
 
-            let status:String?
+            let status: String?
 
             if !flags.contains(SCNetworkReachabilityFlags.connectionRequired) && flags.contains(SCNetworkReachabilityFlags.reachable) {
                 status = NetworkStatusConstants.Online

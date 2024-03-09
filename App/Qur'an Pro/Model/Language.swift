@@ -14,13 +14,13 @@ class Language: CustomStringConvertible {
     var id: String
     // language name
     var name: String
-    
-    init(id: String, name: String){
+
+    init(id: String, name: String) {
         self.id = id
         self.name = name
     }
-    
+
     var description: String {
         return "id= \(self.id), name=\(self.name)"
-    }   
+    }
 }
